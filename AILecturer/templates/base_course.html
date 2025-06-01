@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Курси | AI Lecturer{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        <div class="col-auto px-0">
+            <div id="sidebar" class="collapse collapse-horizontal show border-end">
+                <ul id="sidebar-nav" class="list-unstyled ps-0">
+                    <li class="mb-1">
+                        <a href="{% url 'courses:show_overview' course.id %}"
+                            class="btn d-inline-flex align-items-center rounded border-0 collapsed">
+                            Огляд
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="{% url 'courses:show_resources' course.id %}"
+                            class="btn d-inline-flex align-items-center rounded border-0 collapsed">
+                            Навчальні матеріали
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="{% url 'courses:ai_chat:show_chat' course.id %}"
+                            class="btn d-inline-flex align-items-center rounded border-0 collapsed">
+                            AI Асистент
+                        </a>
+                    </li>
+                    <li class="border-top my-3"></li>
+                    <li class="mb-1">
+                        <a href="{% url 'courses:show_participants' course.id %}"
+                            class="btn d-inline-flex align-items-center rounded border-0 collapsed">
+                            Учасники
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <main class="col ps-md-2 pt-2">
+            <button data-bs-target="#sidebar" data-bs-toggle="collapse"
+                class="border rounded-3 p-1 text-decoration-none"> <img src="{% static 'img/menu.png' %}" alt=""
+                    class="img-fluid" style="width: 24px;">
+            </button>
+            {% block course_content %}
+
+            {% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}

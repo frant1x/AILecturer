@@ -1,0 +1,38 @@
+{% extends "base_course.html" %}
+
+{% block title %}Учасники | AI Lecturer{% endblock %}
+
+{% block course_content %}
+<div class="page-header pt-3">
+    <h2>{{ course.name }}</h2>
+    <p>{{ course.department }}</p>
+</div>
+<hr>
+<div class="my-3 p-3 bg-body rounded shadow-sm">
+    <h6 class="border-bottom pb-2 mb-0">Викладач</h6>
+    <div class="d-flex text-body-secondary pt-3">
+        <img src="{{ course.lecturer.avatar.url }}" alt="Lecturer Avatar" class="flex-shrink-0 me-2 rounded" width="32"
+            height="32">
+        <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
+            <div class="d-flex justify-content-between"> <strong class="text-gray-dark">{{ course.lecturer.first_name }}
+                    {{ course.lecturer.last_name }}</strong></div>
+            <span class="d-block">{{ course.lecturer.email }}</span>
+        </div>
+    </div>
+    {% for group in course.groups.all %}
+    <h6 class="border-bottom pb-2 mb-0">{{ group.name }}</h6>
+    {% for student in group.students.all %}
+    <div class="d-flex text-body-secondary pt-3">
+        <img src="{{ student.avatar.url }}" alt="Lecturer Avatar" class="flex-shrink-0 me-2 rounded" width="32"
+            height="32">
+        <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
+            <div class="d-flex justify-content-between"> <strong class="text-gray-dark">{{ student.first_name }}
+                    {{ student.last_name }}</strong>
+            </div>
+            <span class="d-block">{{ student.email }}</span>
+        </div>
+    </div>
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endblock %}

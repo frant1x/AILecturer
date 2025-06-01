@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="form-signing" style="max-width: 400px; margin: auto">
+  <form class="p-4 p-md-5 border rounded-3" method="post">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert 
+                  {% if message.tags == 'success' %}alert-success
+                  {% elif message.tags == 'error' %}alert-danger
+                  {% endif %}
+                  d-flex align-items-center" role="alert">
+      <div>{{ message }}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% csrf_token %}
+    <h1 class="h3 mb-3 fw-normal">Вхід в онлайн-довідник</h1>
+    <div class="form-floating">
+      <input type="email" class="form-control" name="email" placeholder="Email" required />
+      <label for="email">Email</label>
+    </div>
+    <div class="form-floating my-3">
+      <input type="password" class="form-control" name="password" placeholder="Пароль" required />
+      <label for="password">Пароль</label>
+    </div>
+    <button class="w-100 mt-3 btn btn-lg btn-info" type="submit">Увійти</button>
+  </form>
+</div>
+{% endblock %}

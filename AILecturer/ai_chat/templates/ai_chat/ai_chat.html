@@ -1,0 +1,97 @@
+{% extends "base_course.html" %}
+
+{% load static %}
+
+{% block title %}AI Асистент | AI Lecturer{% endblock %}
+
+{% block course_content %}
+<div class="page-header pt-3">
+    <h2>{{ course.name }}</h2>
+    <p>{{ course.department }}</p>
+</div>
+<hr>
+<div class="container">
+    <div class="content container-fluid bootstrap snippets bootdey">
+        <div class="row row-broken">
+            <div class="col-sm-3 col-xs-12 border-end">
+                <div class="col-inside-lg" style="overflow: hidden; outline: none;" tabindex="5000">
+                    <div class="chat-history">
+                        <form action="{% url 'courses:ai_chat:create_session' course.id %}" method="post"
+                            style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit"
+                                style="background:none; border:none; color:#0dcaf0; padding:0; font-size:inherit; cursor:pointer;">
+                                <h6>Новий чат</h6>
+                            </button>
+                        </form>
+                        {% if chat_sessions %}
+                        <h6>Історія запитів:</h6>
+                        {% for session in chat_sessions %}
+                        <div class="chat-session d-flex justify-content-between">
+                            <a href="{% url 'courses:ai_chat:show_chat_session' course.id session.id %}" class="chat">
+                                <div class="name">{{ session.updated_at }}</div>
+                            </a>
+                            <form action="{% url 'courses:ai_chat:delete_session' course.id %}"
+                                class="delete-chat-button" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="session_id" value="{{ session.id }}">
+                                <button type="submit"
+                                    style="background: none; border: none; color: red; cursor: pointer;"
+                                    title="Видалити чат">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-9 col-xs-12 active-chat" style="overflow: hidden; outline: none;" tabindex="5001">
+                <div class="col-inside-lg decor-default">
+                    <div id="chat-body" class="chat-body" data-course-id="{{ course.id }}"
+                        data-session-id="{{ session_id }}">
+                        <h6>AI Асистент</h6>
+                        <div id="messages" data-avatar-url="{{ request.user.avatar.url }}">
+                            {% if session_id is not None %}
+                            {% if messages %}
+                            {% for message in messages %}
+                            {% if message.sender == 0 %}
+                            <div class="message user">
+                                <div class="avatar">
+                                    <img src="{{ request.user.avatar.url }}" alt="">
+                                </div>
+                                <div class="text">
+                                    {{ message.content|linebreaksbr }}
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="message bot">
+                                <div class="avatar">
+                                    <img src="{% static 'img/bot.png' %}" alt="">
+                                </div>
+                                <div class="text">
+                                    {{ message.content|linebreaksbr }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% else %}
+                            {% endif %}
+                        </div>
+                        <form id="chat-form" class="message-add d-flex align-items-start gap-2" method="post"
+                            onsubmit="sendMessage(event)">
+                            {% csrf_token %}
+                            <textarea id="chat-input" placeholder="Поставте запитання" class="form-control" rows="1"
+                                autocomplete="off"
+                                style="resize: none; overflow-y: hidden; line-height: 1.5em;"></textarea>
+                            <button type="submit" class="btn btn-info">Відправити</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

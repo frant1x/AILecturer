@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Мої курси | AI Lecturer{% endblock %}
+{% block content %}
+<section class="py-xl-8 py-6">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-10 col-md-10 col-12 mx-auto">
+                <div class="d-flex flex-column gap-2 text-center mb-xl-7 mb-3">
+                    <h2 class="h1 mb-0">Мої курси</h2>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="tabContent">
+            <div class="tab-pane fade active show" id="courses" role="tabpanel" aria-labelledby="courses-tab">
+                <div class="table-responsive border-0 overflow-y-hidden">
+                    <table class="table mb-0 text-nowrap table-centered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Курси</th>
+                                <th>Викладач</th>
+                                <th>Дія</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in courses %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex flex-column gap-1">
+                                            <h4 class="mb-0 text-primary-hover">{{ course.name }}</h4>
+                                            <span>Updated on {{ course.updated_at }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center flex-row gap-2">
+                                        <img src="{{ course.lecturer.avatar.url }}" alt="avatar"
+                                            class="rounded-circle avatar-xs" width="32" height="32">
+                                        <h5 class="mb-0">
+                                            {% if course.lecturer.first_name or course.lecturer.last_name %}
+                                            {{ course.lecturer.first_name|default_if_none:"" }}
+                                            {{ course.lecturer.last_name|default_if_none:"" }}
+                                            {% else %}
+                                            {{ course.lecturer|default:"" }}
+                                            {% endif %}
+                                        </h5>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{% url 'courses:show_overview' course.id %}"
+                                        class="btn btn-outline-secondary btn-sm">Відкрити</a>
+                                </td>
+                                <td>
+                                    <span class="dropdown dropstart">
+                                        <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#" role="button"
+                                            id="courseDropdown1" data-bs-toggle="dropdown" data-bs-offset="-20,20"
+                                            aria-expanded="false">
+                                            <i class="fe fe-more-vertical"></i>
+                                        </a>
+                                        <span class="dropdown-menu" aria-labelledby="courseDropdown1">
+                                            <span class="dropdown-header">Settings</span>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fe fe-x-circle dropdown-item-icon"></i>
+                                                Reject with Feedback
+                                            </a>
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p class="d-block text-end mt-3"> <a href="{% url 'courses:show_courses' %}">Всі курси</a> </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

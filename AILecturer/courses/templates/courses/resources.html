@@ -1,0 +1,84 @@
+{% extends "base_course.html" %}
+
+{% block title %}Навчальні матеріали | AI Lecturer{% endblock %}
+
+{% block course_content %}
+<div class="modal fade" id="add_resourceModal" tabindex="-1" aria-labelledby="add_resourceModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="add_resourceModalLabel">Новий навчальний матеріал</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'courses:add_resource' course.id %}" id="add_resourceForm" method="post"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Виберіть файл</label>
+                        <input class="form-control" type="file" id="formFile" name="resource" accept=".pdf">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Закрити
+                </button>
+                <button type="submit" class="btn btn-primary" form="add_resourceForm">
+                    Додати
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-header pt-3">
+    <div class="d-flex justify-content-between">
+        <h2>{{ course.name }}</h2>
+        {% if request.user.role == 1 %}
+        <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#add_resourceModal">
+            Додати
+        </button>
+        {% endif %}
+    </div>
+    <p>{{ course.department }}</p>
+</div>
+<hr>
+<div class="my-3 p-3">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-dismissible fade show
+                  {% if message.tags == 'success' %}alert-success
+                  {% elif message.tags == 'error' %}alert-danger
+                  {% endif %}
+                  d-flex align-items-center" role="alert">
+        <div>{{ message }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% for resource_name, resource_values in resources.items %}
+    <div class="d-flex text-body-secondary align-items-center">
+        <i class="file-icon flex-shrink-0 me-2 fs-3 text-primary" style="width:32px"></i>
+        <div class="mb-0 small lh-sm w-100" style="font-size: 1.25rem;">
+            <div class="d-flex justify-content-between">
+                <a class="resource-link text-info" href="{{ resource_values.1 }}" target="_blank"
+                    style="color: inherit;">
+                    <strong>{{ resource_name }}</strong>
+                </a>
+                {% if request.user.role == 1 %}
+                <form action="{% url 'courses:delete_resource' course.id resource_values.0 %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: red; cursor: pointer;"
+                        title="Видалити ресурс">
+                        🗑️
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <hr>
+    {% endfor %}
+</div>
+{% endblock %}

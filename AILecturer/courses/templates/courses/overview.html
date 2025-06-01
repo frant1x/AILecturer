@@ -1,0 +1,88 @@
+{% extends "base_course.html" %}
+{% block title %}Огляд курсу | AI Lecturer{% endblock %}
+{% block course_content %}
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editModalLabel">Редагування курсу</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'courses:edit_course' course.id %}" id="editForm" method="post"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Коротка анотація дисципліни</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="course_workload" class="form-label">Обсяг курсу</label>
+                        <textarea class="form-control" id="course_workload" name="course_workload" rows="1"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="groups" class="form-label">Групи</label>
+                        <select class="form-select" id="groups" name="groups" multiple required>
+                            {% for group in groups %}
+                            <option value="{{ group.id }}">{{ group.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="syllabus" class="form-label">Силабус (URL)</label>
+                        <input class="form-control" type="url" id="syllabus" name="syllabus">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Закрити
+                </button>
+                <button type="submit" class="btn btn-primary" form="editForm">
+                    Редагувати
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-header pt-3">
+    <div class="d-flex justify-content-between">
+        <h2>{{ course.name }}</h2>
+        {% if request.user.role == 1 %}
+        <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#editModal">
+            Редагувати
+        </button>
+        {% endif %}
+    </div>
+    <p>{{ course.department }}</p>
+</div>
+<hr>
+<p class="lead">Викладач</p>
+<p>{% if course.lecturer.first_name or course.lecturer.last_name %}
+    {{ course.lecturer.first_name|default_if_none:"" }}
+    {{ course.lecturer.last_name|default_if_none:"" }}
+    {% else %}
+    {{ course.lecturer|default:"" }}
+    {% endif %}</p>
+<hr>
+<div class="row">
+    <div class="col-12">
+        <p class="lead">Коротка анотація дисципліни</p>
+        <p>{{ course.description }}</p>
+        <hr>
+        <p class="lead">Обсяг курсу</p>
+        <p>{{ course.course_workload }}</p>
+        <hr>
+        <p class="lead">Групи</p>
+        <p>
+        <p>{{ course_groups }}</p>
+        </p>
+        <hr>
+        <p class="lead">Силабус</p>
+        {% if course.syllabus_url %}
+        <a href="{{ course.syllabus_url }}" target="_blank">Відкрити</a>
+        {% endif %}
+        <hr>
+    </div>
+</div>
+{% endblock %}
