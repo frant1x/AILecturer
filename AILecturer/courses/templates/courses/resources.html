@@ -3,6 +3,20 @@
 {% block title %}Навчальні матеріали | AI Lecturer{% endblock %}
 
 {% block course_content %}
+<div id="loadingOverlay" style="display: none;
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.5);
+     z-index: 9999;
+     align-items: center;
+     justify-content: center;">
+    <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Завантаження...</span>
+    </div>
+</div>
 <div class="modal fade" id="add_resourceModal" tabindex="-1" aria-labelledby="add_resourceModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
@@ -81,4 +95,9 @@
     <hr>
     {% endfor %}
 </div>
+<script>
+    document.getElementById("add_resourceForm").addEventListener("submit", function () {
+        document.getElementById("loadingOverlay").style.display = "flex";
+    });
+</script>
 {% endblock %}

@@ -24,6 +24,17 @@ class CustomUserManager(BaseUserManager):
         user.save()
         return user
 
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("role", 2)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError(("Superuser must have is_staff=True."))
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError(("Superuser must have is_superuser=True."))
+        return self.create_user(email, password, **extra_fields)
+
 
 class Group(models.Model):
     name = models.CharField(unique=True, max_length=20)
@@ -51,12 +62,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.email}"
 
     def save(self, *args, **kwargs):
-        if self.pk is None:
-            self.set_password(self.password)
-        else:
-            orig = User.objects.get(pk=self.pk)
-            if self.password != orig.password:
+        if not self.is_superuser:
+            if self.pk is None:
                 self.set_password(self.password)
+            else:
+                orig = User.objects.get(pk=self.pk)
+                if self.password != orig.password:
+                    self.set_password(self.password)
         super().save(*args, **kwargs)
         if not self.avatar:
             self.generate_avatar()
